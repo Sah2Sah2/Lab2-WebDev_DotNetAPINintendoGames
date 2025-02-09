@@ -6,17 +6,6 @@ using NintendoGamesLABB2.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// CORS policy
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("AllowSpecificOrigins", policy =>
-//    {
-//        policy.WithOrigins("http://localhost:3000") 
-//              .AllowAnyMethod()
-//              .AllowAnyHeader();
-//    });
-//});
-
 // CORS allowed from multiple origins to solve the CORS access 
 builder.Services.AddCors(options =>
 {
@@ -42,8 +31,13 @@ builder.Services.AddSingleton<MongoCRUD>(serviceProvider =>
     return new MongoCRUD(configuration); // Pass the IConfiguration object
 });
 
-
 var app = builder.Build();
+
+// Enable CORS before routing and other middlewares
+app.UseCors("AllowSpecificOrigins");
+
+app.UseHttpsRedirection();
+app.UseAuthorization();
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
@@ -51,12 +45,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-// Enable CORS before routing
-app.UseCors("AllowSpecificOrigins");
-
-app.UseHttpsRedirection();
-app.UseAuthorization();
 
 // POST method to add a new game
 app.MapPost("/game", async (NintendoGame game, MongoCRUD db) =>
