@@ -32,15 +32,17 @@ var app = builder.Build();
 // Enable CORS before routing and other middlewares
 app.UseCors("AllowSpecificOrigins");
 
-app.UseHttpsRedirection();
-app.UseAuthorization();
-
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseSwagger();
+app.UseSwaggerUI();
+app.UseHttpsRedirection();
+app.UseAuthorization();
 
 // POST method to add a new game
 app.MapPost("/game", async (NintendoGame game, MongoCRUD db) =>
