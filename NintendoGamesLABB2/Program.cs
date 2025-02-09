@@ -7,11 +7,22 @@ using NintendoGamesLABB2.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // CORS policy
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowSpecificOrigins", policy =>
+//    {
+//        policy.WithOrigins("http://localhost:3000") 
+//              .AllowAnyMethod()
+//              .AllowAnyHeader();
+//    });
+//});
+
+// CORS allowed from multiple origins to solve the CORS access 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigins", policy =>
     {
-        policy.WithOrigins("http://localhost:3000") 
+        policy.AllowAnyOrigin()   // Allows all origins
               .AllowAnyMethod()
               .AllowAnyHeader();
     });
