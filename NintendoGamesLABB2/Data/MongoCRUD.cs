@@ -14,8 +14,8 @@ namespace NintendoGamesLABB2.Data
 
         public MongoCRUD(IConfiguration configuration)
         {
-            var connectionString = Environment.GetEnvironmentVariable("MongoDB_ConnectionString"); // Retrieve from environment variable
-            var databaseName = Environment.GetEnvironmentVariable("MongoDB_DatabaseName"); // Retrieve from environment variable
+            var connectionString = configuration["MongoDB_ConnectionString"]; // Retrieve from configuration
+            var databaseName = configuration["MongoDB_DatabaseName"]; // Retrieve from configuration
 
             if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(databaseName))
             {

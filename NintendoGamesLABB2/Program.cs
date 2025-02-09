@@ -25,11 +25,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Inject MongoCRUD with connection string from environment variables
-builder.Services.AddSingleton<MongoCRUD>(serviceProvider =>
-{
-    var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-    return new MongoCRUD(configuration); // Pass the IConfiguration object
-});
+builder.Services.AddSingleton<MongoCRUD>(new MongoCRUD(builder.Configuration));
 
 var app = builder.Build();
 
