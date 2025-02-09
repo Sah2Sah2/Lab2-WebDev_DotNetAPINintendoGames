@@ -1,9 +1,21 @@
+using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using NintendoGamesLABB2.Data;
 using NintendoGamesLABB2.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigins", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000") 
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 // Add services to the container
 builder.Services.AddAuthorization();
@@ -12,12 +24,13 @@ builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Inject MongoCRUD with connection string from appsettings.json
+// Inject MongoCRUD with connection string from environment variables
 builder.Services.AddSingleton<MongoCRUD>(serviceProvider =>
 {
     var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-    return new MongoCRUD(configuration);
+    return new MongoCRUD(configuration); // Pass the IConfiguration object
 });
+
 
 var app = builder.Build();
 
@@ -27,6 +40,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Enable CORS before routing
+app.UseCors("AllowSpecificOrigins");
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
@@ -48,7 +64,6 @@ app.MapGet("/games", async (MongoCRUD db) =>
 // GET game by ID
 app.MapGet("/game/{id}", async (string id, MongoCRUD db) =>
 {
-    // Convert the string ID to ObjectId
     if (!ObjectId.TryParse(id, out ObjectId objectId))
     {
         return Results.BadRequest("Invalid ID format.");
@@ -93,7 +108,6 @@ app.MapPut("/game", async (NintendoGame updatedGame, MongoCRUD db) =>
 // DELETE game by ID
 app.MapDelete("/game/{id}", async (string id, MongoCRUD db) =>
 {
-    // Convert the string ID to ObjectId
     if (!ObjectId.TryParse(id, out ObjectId objectId))
     {
         return Results.BadRequest("Invalid ID format.");

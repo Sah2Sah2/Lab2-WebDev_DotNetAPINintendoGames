@@ -14,8 +14,13 @@ namespace NintendoGamesLABB2.Data
 
         public MongoCRUD(IConfiguration configuration)
         {
-            var connectionString = configuration.GetSection("MongoDB:ConnectionString").Value; // String stored in appsetting.json to not expose it 
-            var databaseName = configuration.GetSection("MongoDB:DatabaseName").Value;
+            var connectionString = Environment.GetEnvironmentVariable("MongoDB_ConnectionString"); // Retrieve from environment variable
+            var databaseName = Environment.GetEnvironmentVariable("MongoDB_DatabaseName"); // Retrieve from environment variable
+
+            if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(databaseName))
+            {
+                throw new InvalidOperationException("MongoDB connection string or database name is not set in the environment variables.");
+            }
 
             var client = new MongoClient(connectionString);
             _database = client.GetDatabase(databaseName);
