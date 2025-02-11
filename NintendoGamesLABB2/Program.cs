@@ -3,6 +3,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using NintendoGamesLABB2.Data;
 using NintendoGamesLABB2.Models;
+using System.Xml.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -80,15 +81,14 @@ app.MapGet("/game", async (string name, MongoCRUD db) =>
         return Results.BadRequest("Game name is required.");
     }
 
-    var game = await db.GetAllGames("Games");
-    var foundGame = game.FirstOrDefault(g => g.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+    var games = await db.GetGamesByName("Games", name);
 
-    if (foundGame == null)
+    if (games == null || games.Count == 0)
     {
-        return Results.NotFound($"Game with name '{name}' not found.");
+        return Results.NotFound($"No games found containing '{name}'.");
     }
 
-    return Results.Ok(foundGame);
+    return Results.Ok(games);
 });
 
 // UPDATE game details

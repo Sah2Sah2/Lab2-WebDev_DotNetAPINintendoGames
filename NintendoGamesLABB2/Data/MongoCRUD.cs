@@ -32,6 +32,7 @@ namespace NintendoGamesLABB2.Data
             return _database.GetCollection<NintendoGame>(collectionName);
         }
 
+        // Add a game
         public async Task<List<NintendoGame>> AddGame(string collectionName, NintendoGame game)
         {
             var collection = _database.GetCollection<NintendoGame>(collectionName);
@@ -81,6 +82,17 @@ namespace NintendoGamesLABB2.Data
         {
             var collection = _database.GetCollection<NintendoGame>(collectionName);
             return await collection.Find(_ => true).ToListAsync();
+        }
+
+        // Get game by Name 
+        public async Task<List<NintendoGame>> GetGamesByName(string collectionName, string name)
+        {
+            var collection = _database.GetCollection<NintendoGame>(collectionName);
+
+            // Case-insensitive search for games containing 'name' anywhere in the title
+            var filter = Builders<NintendoGame>.Filter.Regex("Name", new BsonRegularExpression(name, "i"));
+
+            return await collection.Find(filter).ToListAsync();
         }
 
         // Get game by ObjectId
