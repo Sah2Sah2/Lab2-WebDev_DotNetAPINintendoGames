@@ -30,7 +30,7 @@ builder.Services.AddSingleton<MongoCRUD>(new MongoCRUD(builder.Configuration));
 
 var app = builder.Build();
 
-// Enable CORS before routing and other middlewares
+// Enable CORS 
 app.UseCors("AllowSpecificOrigins");
 
 // Configure the HTTP request pipeline
